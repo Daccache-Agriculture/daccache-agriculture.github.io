@@ -597,17 +597,10 @@ h2{font-size:max(var(--fmin),calc(clamp(28px,4.4vw,44px)*var(--ts)));margin:10px
 .gal img{opacity:0;transition:opacity .35s,transform .4s}
 .gal img.ok{opacity:1}
 
-#splash{position:fixed;inset:0;z-index:300;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s}
-#splash.out{opacity:0;pointer-events:none}
-#splash img{width:130px;height:auto}
-#splash .sbar{width:min(260px,70vw);height:4px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden}
-#splash .sbar i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}
-#splash p{color:#cfe2cf;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+
 </style>
 </head>
 <body>
-<div id="splash" role="status" aria-live="polite"><img src="img/logo_light.png" alt="Daccache Agriculture"><div class="sbar"><i id="splashBar"></i></div><p id="splashTxt">Loading 0%</p></div>
-<noscript><style>#splash{display:none!important}</style></noscript>
 
 <div class="prog" id="prog"></div>
 <header class="nav">
@@ -963,6 +956,7 @@ const steps=[
 
 /* solutions */
 const I=n=>n.includes('.')?'img/'+n:'img/'+n+'.webp';
+const TH=u=>u.endsWith('.webp')?u.replace('img/','img/t/'):u;
 const SOL=[
  {k:'Greenhouses',tag:'Multi-span, tunnels, nurseries',h:'Protected environments, engineered for performance',d:'Multi-span, bi-tunnel and traditional tunnels, net and shade houses, and high-tech nurseries.',f:[['Multi-span greenhouses','Large-scale cultivation with efficient use of space.'],['Bi-tunnels','Protected cultivation in different growing conditions.'],['Traditional tunnels','Simple, economical tunnels for protected open-field production.'],['Net & shade houses','Crop and tree protection with natural ventilation and light management.'],['High-tech nurseries','Controlled environments for healthy, consistent plant growth.']],
   g:[['gh_multi','Multi-span greenhouse'],['gh_a','Bi-tunnel'],['gh_b','Traditional tunnels'],['gh_c','Net & shade house'],['gh_nursery','High-tech nursery']]},
@@ -986,7 +980,7 @@ const SOL=[
 (function(){const tabs=$('#tabs'),out=$('#sol');
  function show(i){const s=SOL[i];$('#solutions').dataset.theme=s.k==='Poultry houses'?'poultry':s.k==='Solar structures'?'solar':'';$$('.tab',tabs).forEach((b,j)=>b.setAttribute('aria-selected',j===i));
   const items=s.g.map(([n,c])=>({src:I(n),cap:c}));
-  out.innerHTML=`<div><h3>${s.h}</h3><p class="desc">${s.d}</p><ul class="facts">${s.f.map(f=>`<li><b>${f[0]}</b><span>${f[1]}</span></li>`).join('')}</ul></div><div class="gal${s.contain?' contain':''}">${items.map((x,j)=>`<button data-i="${j}" class="${x.src.endsWith('.png')?'dw':''}" aria-label="Open photo: ${x.cap}"><img src="${x.src}" alt="${x.cap}" decoding="async"><span class="cap">${x.cap}</span></button>`).join('')}</div>`;
+  out.innerHTML=`<div><h3>${s.h}</h3><p class="desc">${s.d}</p><ul class="facts">${s.f.map(f=>`<li><b>${f[0]}</b><span>${f[1]}</span></li>`).join('')}</ul></div><div class="gal${s.contain?' contain':''}">${items.map((x,j)=>`<button data-i="${j}" class="${x.src.endsWith('.png')?'dw':''}" aria-label="Open photo: ${x.cap}"><img src="${TH(x.src)}" alt="${x.cap}" decoding="async"><span class="cap">${x.cap}</span></button>`).join('')}</div>`;
   const gb=$$('.gal button',out);gb.forEach(b=>b.onclick=()=>openLb(items,+b.dataset.i));const r=(gb.length-1)%3;if(gb.length>1&&r===1){const l=gb[gb.length-1];l.style.gridColumn='span 6';l.style.aspectRatio='21/9'}if(r===2){gb.slice(-2).forEach(b=>b.style.gridColumn='span 3')}}
  SOL.forEach((s,i)=>{const b=el('button',{class:'tab',role:'tab'},s.k);b.onclick=()=>show(i);tabs.append(b)});window.selectSol=show;show(0)})();
 
@@ -1029,10 +1023,10 @@ const BEAUTY=[['aerial_shade','Shade & greenhouse complex'],['coffee','Al Marmoo
   $('#count').textContent=`Showing ${L.length} of ${P.length} projects`;
   const g=$('#grid');g.innerHTML=L.length?'':'<p class="empty">No projects match this combination. Try another type or country.</p>';
   const items=L.map(p=>({src:I(p.img),cap:`${p.n} · ${p.c} · ${p.y}`}));
-  L.forEach((p,i)=>{const b=el('button',{class:'card','aria-label':`Open photo of ${p.n}`},`<div class="im"><img src="${I(p.img)}" alt="${p.n}" loading="lazy"></div><div class="tx"><small>${p.c} · ${p.t}</small><h3>${p.n}</h3><span class="big">${p.big}</span><span class="yr">${p.y} · ${p.x}</span></div>`);b.onclick=()=>openLb(items,i);g.append(b)})}
+  L.forEach((p,i)=>{const b=el('button',{class:'card','aria-label':`Open photo of ${p.n}`},`<div class="im"><img src="${TH(I(p.img))}" alt="${p.n}"></div><div class="tx"><small>${p.c} · ${p.t}</small><h3>${p.n}</h3><span class="big">${p.big}</span><span class="yr">${p.y} · ${p.x}</span></div>`);b.onclick=()=>openLb(items,i);g.append(b)})}
  draw();
  const bi=BEAUTY.map(([n,c])=>({src:I(n),cap:c}));
- BEAUTY.forEach(([n,c],i)=>{const b=el('button',{'aria-label':'Open photo: '+c},`<img src="${I(n)}" alt="${c}" loading="lazy"><span class="cap" style="position:absolute;left:0;bottom:0;padding:7px 14px;background:rgba(6,52,26,.88);color:#fff;font-size:max(var(--fmin),calc(13px*var(--ts)));font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:0 10px 0 0">${c}</span>`);b.onclick=()=>openLb(bi,i);$('#strip').append(b)});
+ BEAUTY.forEach(([n,c],i)=>{const b=el('button',{'aria-label':'Open photo: '+c},`<img src="${TH(I(n))}" alt="${c}"><span class="cap" style="position:absolute;left:0;bottom:0;padding:7px 14px;background:rgba(6,52,26,.88);color:#fff;font-size:max(var(--fmin),calc(13px*var(--ts)));font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:0 10px 0 0">${c}</span>`);b.onclick=()=>openLb(bi,i);$('#strip').append(b)});
  const rows=[['Nesma Trading Red Sea','Saudi Arabia','2019','Shade houses, nursery'],['Zaid Al Hussain','Saudi Arabia','2019','Multispan, shade house'],['Green Riyadh','Saudi Arabia','2022–23','500,000 m² shadehouses'],['ROSHN Sedra','Saudi Arabia','2024–25','Nursery, 10,000 m²'],['ROSHN Jeddah','Saudi Arabia','2024–25','Nursery, 700,000 m²'],['Nesma Agriculture','Saudi Arabia','2021–22','60,000 m² hydroponics'],['King Salman Park Foundation','Saudi Arabia','2023–24','500,000 m² shadehouses'],['Green Dunes Landscape','Saudi Arabia','2024','Nursery, 140,000 m²'],['Qiddiyah THF','Saudi Arabia','2026','18,000 m² shadehouse'],['Al Muthanna Contracting','Saudi Arabia','2025','75,000 m² shade/greenhouse'],['Del Monte Foods Jordan','Jordan','2016','105,000 m² hydroponics'],['Elite Agro Blueberry','UAE','2018–19','120,000 m² multispan'],['Elite Agro Coffee','UAE','2023','10,000 m² greenhouse'],['Elite Agro Tea','UAE','2024','10,000 m² greenhouse'],['Agritek','UAE','2022','Strawberry gutters'],['Goût Blanc Farm','Lebanon','2018','Goat house'],['Agro Eco System Capital','Lebanon','2020','Cooled multispan'],['Al Aamra Irrigation','Lebanon','2022','85 ha olive trees'],['Elite Agro L.L.C.','Bahrain','2020','50,000 m² gutters'],['Agri-corp','Côte d’Ivoire','2019','5,000 m² greenhouses']];
  $('#tbl tbody').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')})();
 
@@ -1092,19 +1086,14 @@ $$('[data-copy]').forEach(b=>b.onclick=async()=>{const t=b.textContent;try{await
 
 
 
-/* preload every photo behind a short loading screen, then reveal the page */
-(function(){const spl=document.getElementById('splash');if(!spl)return;
- const bar=document.getElementById('splashBar'),txt=document.getElementById('splashTxt');
- const urls=[];const add=u=>{if(u&&!urls.includes(u))urls.push(u)};
- document.querySelectorAll('img[src]').forEach(i=>{i.removeAttribute('loading');add(i.getAttribute('src'))});
- try{SOL.forEach(s=>(s.g||[]).forEach(x=>add(I(x[0]))));FAC.forEach(f=>add(I(f.img)));P.forEach(p=>add(I(p.img)));BEAUTY.forEach(b=>add(I(b[0])))}catch(e){}
+
+
+/* after first paint, quietly fetch the small thumbnails so tabs open instantly */
+(function(){const u=[];const add=x=>{if(x&&!u.includes(x))u.push(x)};
+ try{SOL.forEach(s=>(s.g||[]).forEach(x=>add(TH(I(x[0])))));P.forEach(p=>add(TH(I(p.img))));BEAUTY.forEach(b=>add(TH(I(b[0]))));FAC.forEach(f=>add(I(f.img)))}catch(e){}
  ['dw_plan.png','dw_iso.png','dw_section.png','dw_fans.png'].forEach(n=>add('img/'+n));
- let done=0,fin=false;const total=urls.length;
- const end=()=>{if(fin)return;fin=true;spl.classList.add('out');setTimeout(()=>spl.remove(),600)};
- const tick=()=>{done++;const p=Math.round(done/total*100);bar.style.width=p+'%';txt.textContent='Loading '+p+'%';if(done>=total)setTimeout(end,150)};
- urls.forEach(u=>{const im=new Image();im.onload=im.onerror=tick;im.src=u});
- setTimeout(end,15000);
-})();
+ let i=0;const nx=()=>{if(i>=u.length)return;let k=0;for(;k<3&&i<u.length;k++){const im=new Image();im.onload=im.onerror=()=>{if(--run===0)nx()};run++;im.src=u[i++]}};let run=0;
+ const go=()=>nx();window.addEventListener('load',()=>setTimeout(go,300));})();
 </script>
 </body>
 </html>
