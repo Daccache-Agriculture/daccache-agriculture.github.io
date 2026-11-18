@@ -786,7 +786,7 @@ h2{font-size:max(var(--fmin),calc(clamp(28px,4.4vw,44px)*var(--ts)));margin:10px
         <button type="button" class="dsg-view" id="dsgView" aria-label="Enlarge drawing"><img id="dsgImg" src="img/dw_iso.png" alt="" loading="lazy" decoding="async"></button>
         <div class="dsg-specs">
           <span><b>114.95 × 14 m</b>house size</span>
-          <span><b>Double C</b>270×50×20 mm · 2 mm</span>
+          <span><b>Double C</b>steel frame</span>
           <span><b>1.38 m</b>pillar spacing</span>
           <span><b>2.56 / 3.52 m</b>eave / ridge height</span>
         </div>
@@ -926,7 +926,6 @@ document.addEventListener('keydown',e=>{if(!$('#lb').classList.contains('open'))
  $$('#trio button').forEach(b=>b.onclick=()=>openLb(T,+b.dataset.i));
  const D=[
   {src:'img/dw_iso.png',t:'3D model',d:'The whole house at a glance: corrugated roof, side openings and the stepped front section.'},
-  {src:'img/dw_plan.png',t:'Plan and cross-section',d:'Truss layout above, section C–C below: double-C pillars every 1.38 m on a concrete wall and slab.'},
   {src:'img/dw_section.png',t:'Frame section',d:'One double-C arch in detail, with bolted coupling plates at the eaves and the ridge.'},
   {src:'img/dw_fans.png',t:'End wall with fans',d:'Eight exhaust fans pull the air through the house.'}
  ].map(x=>({...x,cap:x.t}));
@@ -964,7 +963,7 @@ const SOL=[
   g:[['tomato','Tomato · growing gutter'],['lettuce','Lettuce · NFT system'],['hy_a','Strawberry · growing gutter'],['hy_b','Strawberry · A-frame'],['hy_c','Blueberry · hydroponic system'],['hy_d','A-frame growing bags']]},
  {k:'Climate & automation',tag:'Cooling, heating, control',h:'Smart climate control',d:'Fully automated, with only daily monitoring. Irrigation runs in the order and duration needed, fertilizer is injected at set ratios, and sensors control water into plastic lakes and tanks.',f:[['Control panel & controller','Runs fans, irrigation, shading and heating.'],['Weather station','Wind, temperature and humidity sensors drive the automation.'],['Automatic roof opening','Roof vents open on demand for natural ventilation.'],['Heating systems','Hot-air heaters with ducts keep plants warm and growth consistent.']],
   g:[['panel','Control panel & controller'],['weather','Weather station'],['roof','Automatic roof opening'],['heater','Heating system'],['nursery_boom','Boom irrigation'],['pads','Cooling pads']]},
- {k:'Poultry houses',tag:'Double-C steel houses',h:'Poultry houses, built on double-C steel frames',d:'Purpose-built steel poultry houses with ventilation and temperature control for healthy, productive flocks. Cooling with exhaust fans, heating and automation can be added.',f:[['Project','Broiler house · Africa · 15,000 m² · 2025'],['Frame','Two C purlins bolted together into double C profiles (270×50×20 mm, 2 mm) form pillars and arches.'],['Roof build-up','Polyethylene (PE), insulation, polyethylene (PE).'],['Cladding','Corrugated sheets, sandwich panels or single panels.']],
+ {k:'Poultry houses',tag:'Double-C steel houses',h:'Poultry houses, built on double-C steel frames',d:'Purpose-built steel poultry houses with ventilation and temperature control for healthy, productive flocks. Cooling with exhaust fans, heating and automation can be added.',f:[['Project','Broiler house · Africa · 15,000 m² · 2025'],['Frame','Two C purlins bolted together into double C profiles form pillars and arches.'],['Roof build-up','Polyethylene (PE), insulation, polyethylene (PE).'],['Cladding','Corrugated sheets, sandwich panels or single panels.']],
   g:[['poultry_a','Broilers'],['poultry_b','Steel frame under construction'],['poultry_c','Interior with exhaust fans'],['poultry_d','Roof gutter and frame'],['dw_iso.png','Isometric · 114.95 × 14 m'],['dw_section.png','Frame section'],['dw_fans.png','End wall · exhaust fans']]},
  {k:'Animal houses',tag:'Goat houses and more',h:'Goat houses and animal housing',d:'Purpose-built galvanized steel structures with ventilation, temperature control, mechanized side openings and easy-clean floors.',f:[['Goût Blanc Farm','Annaya, Lebanon · Goat house · 2018'],['Turnkey','Design, supply and installation']],
   g:[['goat_b','Goat house interior'],['goat_c','Feeding aisle & brushes'],['goat_d','Bobcat-cleaned manure alley'],['goat_a','Steel roof structure'],['goat_f','Motorised side opening']]},
@@ -1091,7 +1090,7 @@ $$('[data-copy]').forEach(b=>b.onclick=async()=>{const t=b.textContent;try{await
 /* after first paint, quietly fetch the small thumbnails so tabs open instantly */
 (function(){const u=[];const add=x=>{if(x&&!u.includes(x))u.push(x)};
  try{SOL.forEach(s=>(s.g||[]).forEach(x=>add(TH(I(x[0])))));P.forEach(p=>add(TH(I(p.img))));BEAUTY.forEach(b=>add(TH(I(b[0]))));FAC.forEach(f=>add(I(f.img)))}catch(e){}
- ['dw_plan.png','dw_iso.png','dw_section.png','dw_fans.png'].forEach(n=>add('img/'+n));
+ ['dw_iso.png','dw_section.png','dw_fans.png'].forEach(n=>add('img/'+n));
  let i=0;const nx=()=>{if(i>=u.length)return;let k=0;for(;k<3&&i<u.length;k++){const im=new Image();im.onload=im.onerror=()=>{if(--run===0)nx()};run++;im.src=u[i++]}};let run=0;
  const go=()=>nx();window.addEventListener('load',()=>setTimeout(go,300));})();
 </script>
