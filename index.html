@@ -596,9 +596,18 @@ h2{font-size:max(var(--fmin),calc(clamp(28px,4.4vw,44px)*var(--ts)));margin:10px
 .gal button,.fac .ph,.card .im,.trio button{background:#0e3b21}
 .gal img{opacity:0;transition:opacity .35s,transform .4s}
 .gal img.ok{opacity:1}
+
+#splash{position:fixed;inset:0;z-index:300;background:var(--deep);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s}
+#splash.out{opacity:0;pointer-events:none}
+#splash img{width:130px;height:auto}
+#splash .sbar{width:min(260px,70vw);height:4px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden}
+#splash .sbar i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}
+#splash p{color:#cfe2cf;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
 </style>
 </head>
 <body>
+<div id="splash" role="status" aria-live="polite"><img src="img/logo_light.png" alt="Daccache Agriculture"><div class="sbar"><i id="splashBar"></i></div><p id="splashTxt">Loading 0%</p></div>
+<noscript><style>#splash{display:none!important}</style></noscript>
 
 <div class="prog" id="prog"></div>
 <header class="nav">
@@ -1081,11 +1090,21 @@ const FM={"pins": {"lebanon": [594.6665905139624, 143.62823436717014], "riyadh":
 /* copy */
 $$('[data-copy]').forEach(b=>b.onclick=async()=>{const t=b.textContent;try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied'}catch(e){b.textContent='Select and copy the text above'}setTimeout(()=>b.textContent=t,2200)});
 
-/* warm the cache with the other photos once the page is idle (skipped on slow or data-saver connections) */
-(function(){const c=navigator.connection||{};if(c.saveData||/2g|3g/.test(c.effectiveType||''))return;
- const go=()=>{const u=[...new Set((typeof SOL!=='undefined'?SOL:[]).flatMap(s=>(s.g||[]).map(x=>x[0])).concat((typeof P!=='undefined'&&P.length&&P[0].img?P:[]).map(p=>p.img)))].filter(Boolean).map(n=>n.includes('.')?'img/'+n:'img/'+n+'.webp');
-  let i=0;(function nx(){if(i>=u.length)return;const im=new Image();im.onload=im.onerror=()=>setTimeout(nx,120);im.src=u[i++]})()};
- window.addEventListener('load',()=>setTimeout(go,2500))})();
+
+
+/* preload every photo behind a short loading screen, then reveal the page */
+(function(){const spl=document.getElementById('splash');if(!spl)return;
+ const bar=document.getElementById('splashBar'),txt=document.getElementById('splashTxt');
+ const urls=[];const add=u=>{if(u&&!urls.includes(u))urls.push(u)};
+ document.querySelectorAll('img[src]').forEach(i=>{i.removeAttribute('loading');add(i.getAttribute('src'))});
+ try{SOL.forEach(s=>(s.g||[]).forEach(x=>add(I(x[0]))));FAC.forEach(f=>add(I(f.img)));P.forEach(p=>add(I(p.img)));BEAUTY.forEach(b=>add(I(b[0])))}catch(e){}
+ ['dw_plan.png','dw_iso.png','dw_section.png','dw_fans.png'].forEach(n=>add('img/'+n));
+ let done=0,fin=false;const total=urls.length;
+ const end=()=>{if(fin)return;fin=true;spl.classList.add('out');setTimeout(()=>spl.remove(),600)};
+ const tick=()=>{done++;const p=Math.round(done/total*100);bar.style.width=p+'%';txt.textContent='Loading '+p+'%';if(done>=total)setTimeout(end,150)};
+ urls.forEach(u=>{const im=new Image();im.onload=im.onerror=tick;im.src=u});
+ setTimeout(end,15000);
+})();
 </script>
 </body>
 </html>
