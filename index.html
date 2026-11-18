@@ -592,6 +592,10 @@ h2{font-size:max(var(--fmin),calc(clamp(28px,4.4vw,44px)*var(--ts)));margin:10px
  .contact h2{max-width:none;font-size:max(var(--fmin),calc(clamp(28px,4vw,44px)*var(--ts)))}
  .cgrid a,.cgrid div{padding:12px 16px!important}
 }
+
+.gal button,.fac .ph,.card .im,.trio button{background:#0e3b21}
+.gal img{opacity:0;transition:opacity .35s,transform .4s}
+.gal img.ok{opacity:1}
 </style>
 </head>
 <body>
@@ -894,6 +898,11 @@ h2{font-size:max(var(--fmin),calc(clamp(28px,4.4vw,44px)*var(--ts)));margin:10px
 </div>
 
 <script>
+/* image safety net: fade in when loaded, retry once if a photo fails */
+document.addEventListener('load',e=>{if(e.target.tagName==='IMG')e.target.classList.add('ok')},true);
+document.addEventListener('error',e=>{const t=e.target;if(t.tagName==='IMG'&&!t.dataset.r&&t.getAttribute('src')){t.dataset.r=1;const u=t.getAttribute('src');setTimeout(()=>{t.src=u+(u.includes('?')?'&':'?')+'r=1'},700)}},true);
+setInterval(()=>document.querySelectorAll('.gal img:not(.ok)').forEach(i=>{if(i.complete&&i.naturalWidth)i.classList.add('ok')}),1500);
+
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const el=(t,a={},h='')=>{const e=document.createElement(t);for(const k in a)e.setAttribute(k,a[k]);e.innerHTML=h;return e};
 
@@ -968,7 +977,7 @@ const SOL=[
 (function(){const tabs=$('#tabs'),out=$('#sol');
  function show(i){const s=SOL[i];$('#solutions').dataset.theme=s.k==='Poultry houses'?'poultry':s.k==='Solar structures'?'solar':'';$$('.tab',tabs).forEach((b,j)=>b.setAttribute('aria-selected',j===i));
   const items=s.g.map(([n,c])=>({src:I(n),cap:c}));
-  out.innerHTML=`<div><h3>${s.h}</h3><p class="desc">${s.d}</p><ul class="facts">${s.f.map(f=>`<li><b>${f[0]}</b><span>${f[1]}</span></li>`).join('')}</ul></div><div class="gal${s.contain?' contain':''}">${items.map((x,j)=>`<button data-i="${j}" class="${x.src.endsWith('.png')?'dw':''}" aria-label="Open photo: ${x.cap}"><img src="${x.src}" alt="${x.cap}" loading="lazy"><span class="cap">${x.cap}</span></button>`).join('')}</div>`;
+  out.innerHTML=`<div><h3>${s.h}</h3><p class="desc">${s.d}</p><ul class="facts">${s.f.map(f=>`<li><b>${f[0]}</b><span>${f[1]}</span></li>`).join('')}</ul></div><div class="gal${s.contain?' contain':''}">${items.map((x,j)=>`<button data-i="${j}" class="${x.src.endsWith('.png')?'dw':''}" aria-label="Open photo: ${x.cap}"><img src="${x.src}" alt="${x.cap}" decoding="async"><span class="cap">${x.cap}</span></button>`).join('')}</div>`;
   const gb=$$('.gal button',out);gb.forEach(b=>b.onclick=()=>openLb(items,+b.dataset.i));const r=(gb.length-1)%3;if(gb.length>1&&r===1){const l=gb[gb.length-1];l.style.gridColumn='span 6';l.style.aspectRatio='21/9'}if(r===2){gb.slice(-2).forEach(b=>b.style.gridColumn='span 3')}}
  SOL.forEach((s,i)=>{const b=el('button',{class:'tab',role:'tab'},s.k);b.onclick=()=>show(i);tabs.append(b)});window.selectSol=show;show(0)})();
 
@@ -979,7 +988,7 @@ const FAC=[
  {k:'Cyprus',t:'Cyprus factory',s:'Larnaca',img:'fac_cy',d:'Green Fyllo Agritech, our tubing factory in Larnaca.'}];
 (function(){const tabs=$('#facTabs'),out=$('#fac');
  function show(i){const f=FAC[i];$$('.tab',tabs).forEach((b,j)=>b.setAttribute('aria-selected',j===i));
-  out.innerHTML=`<div class="ph"><img src="${I(f.img)}" alt="${f.t}" loading="lazy" decoding="async"></div><div class="info"><small>Tubing factory</small><h3>${f.t}</h3><p style="color:var(--lime);font-weight:600">${f.s}</p><p style="color:#d6e6d3">${f.d}</p></div>`}
+  out.innerHTML=`<div class="ph"><img src="${I(f.img)}" alt="${f.t}" decoding="async"></div><div class="info"><small>Tubing factory</small><h3>${f.t}</h3><p style="color:var(--lime);font-weight:600">${f.s}</p><p style="color:#d6e6d3">${f.d}</p></div>`}
  FAC.forEach((f,i)=>{const b=el('button',{class:'tab',role:'tab'},f.k);b.onclick=()=>show(i);tabs.append(b)});show(0)})();
 
 /* projects */
